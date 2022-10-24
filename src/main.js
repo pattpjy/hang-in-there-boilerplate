@@ -1,4 +1,24 @@
+
 // query selector variables go here 👇
+var mainImage = document.querySelector(".poster-img")
+var mainTitle = document.querySelector(".poster-title")
+var mainQuote = document.querySelector(".poster-quote")
+var randomBtn = document.querySelector(".show-random")
+var myPosterBtn = document.querySelector(".show-form")
+var formPoster = document.querySelector(".poster-form")
+var mainPoster = document.querySelector(".main-poster")
+var showSavedBtn = document.querySelector(".show-saved")
+var showSavedPg = document.querySelector(".saved-posters")
+var showMainBtn = document.querySelector(".show-main")
+var backToMain = document.querySelector(".back-to-main")
+var savePosterBtn = document.querySelector(".save-poster")
+var showPoster = document.querySelector(".saved-posters-grid")
+var showMyPosterBtn = document.querySelector(".make-poster")
+var imgInput = document.querySelector("#poster-image-url")
+var titleInput = document.querySelector("#poster-title")
+var quoteInput = document.querySelector("#poster-quote")
+var imgDbl = document.querySelector(".saved-posters-grid")
+
 
 // we've provided you with some data to work with 👇
 var images = [
@@ -99,13 +119,100 @@ var quotes = [
   "A champion is defined not by their wins but by how they can recover when they fall."
 ];
 var savedPosters = [];
-var currentPoster;
+var currentPoster =
 
 // event listeners go here 👇
 
+window.addEventListener('load', newPoster);
+
+randomBtn.addEventListener('click', newPoster)
+myPosterBtn.addEventListener('click', makeMyPoster)
+showSavedBtn.addEventListener('click',showSaved)
+showMainBtn.addEventListener('click',backMain)
+backToMain.addEventListener('click',backMain)
+savePosterBtn.addEventListener('click',saveCurPoster)
+showMyPosterBtn.addEventListener('click', createMyPoster)
+imgDbl.addEventListener('dblclick', deletePoster)
+
+
 // functions and event handlers go here 👇
+function newPoster(){
+  var imageURL = images[getRandomIndex(images)]
+  var title = titles[getRandomIndex(titles)]
+  var quote = quotes[getRandomIndex(quotes)]
+  var createPoster = new Poster(imageURL,title,quote)
+  renderMainPoster(createPoster)
+}
+
+function makeMyPoster(){
+  mainPoster.classList.add('hidden')
+  formPoster.classList.remove('hidden')
+}
+
+function showSaved(){
+  mainPoster.classList.add('hidden')
+  showSavedPg.classList.remove('hidden')
+
+  showPoster.innerHTML = "";
+  for( var i = 0 ; i< savedPosters.length; i++){
+    showPoster.innerHTML += `<article class="mini-poster" id="${savedPosters[i].id}">
+    <img class="poster-img" src="${savedPosters[i].imageURL}" alt="nothin' to see here">
+    <h2 class="poster-title">${savedPosters[i].title}</h1>
+    <h4 class="poster-quote">${savedPosters[i].quote}</h3>
+    </article>`
+  }
+}
+
+function backMain(){
+  mainPoster.classList.remove('hidden')
+  showPoster.classList.add('poster')
+  showSavedPg.classList.add('hidden')
+  formPoster.classList.add('hidden')
+}
+
+function saveCurPoster (){
+  savedPosters.push(currentPoster)
+}
+
+function createMyPoster(event){
+  event.preventDefault();
+  var myPoster = new Poster(imgInput.value, titleInput.value,quoteInput.value)
+  console.log(myPoster)
+  mainPoster.classList.remove('hidden')
+  formPoster.classList.add('hidden')
+
+  images.push(imgInput.value);
+  titles.push(titleInput.value);
+  quotes.push(quoteInput.value);
+  renderMainPoster(myPoster)
+}
+function renderMainPoster(display){
+  mainImage.src= display.imageURL
+  mainTitle.innerText= display.title
+  mainQuote.innerText= display.quote
+  currentPoster = display
+}
+
+function deletePoster(event){
+  // when event listerner equal to dblclick, run function?
+
+  if (event.target.classList.contains('mini-poster')) {
+    var clickImageId = event.target.id
+
+    // use id to remove item from array
+    var foundId = savedPosters.findIndex(function (savedPoster) { 
+      return clickImageId === `${savedPoster.id}`
+    })
+    savedPosters.splice(foundId, 1)
+    showSaved()
+  }
+  
+}
+
+
 // (we've provided one for you to get you started)!
 function getRandomIndex(array) {
   return Math.floor(Math.random() * array.length);
 }
+
 
